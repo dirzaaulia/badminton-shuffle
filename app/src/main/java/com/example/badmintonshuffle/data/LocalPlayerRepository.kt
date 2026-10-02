@@ -187,19 +187,16 @@ class LocalPlayerRepository(
     override fun startNewSession(title: String, courtCount: Int) {
         val sdf = SimpleDateFormat("EEE, d MMM • h:mm a", Locale.getDefault())
         val formattedDate = sdf.format(Date())
-        val initialCheckIns = _players.value.take(6).map { it.id }.toSet()
         val newSession = BadmintonSession(
             id = "SESS_" + UUID.randomUUID().toString().take(6).uppercase(),
             title = title.ifBlank { "Court Session ($formattedDate)" },
             dateFormatted = formattedDate,
             courtCount = courtCount.coerceIn(1, 2),
-            checkedInPlayerIds = initialCheckIns
+            checkedInPlayerIds = emptySet()
         )
-        val r1 = RotationEngine.generateRound(newSession, _players.value, 1)
-        val finalizedSession = newSession.copy(currentRound = r1)
 
-        _activeSession.value = finalizedSession
-        saveSession(finalizedSession)
+        _activeSession.value = newSession
+        saveSession(newSession)
     }
 
     override fun setCourtCount(courtCount: Int) {
@@ -503,20 +500,7 @@ class LocalPlayerRepository(
         private const val KEY_ACTIVE_SESSION = "current_active_session"
 
         fun defaultSeedPlayers(): List<Player> {
-            return listOf(
-                Player(id = "P001", name = "Viktor A.", playStyle = PlayStyle.ATTACKER, selfRating = 8.5, avatarColorHex = 0xFF1B5E20, peerRatings = mapOf("P002" to 8.8, "P003" to 8.7, "P004" to 8.5)),
-                Player(id = "P002", name = "Kevin S.", playStyle = PlayStyle.NET_PLAY, selfRating = 9.0, avatarColorHex = 0xFF0D47A1, peerRatings = mapOf("P001" to 9.2, "P003" to 9.0, "P005" to 9.1)),
-                Player(id = "P003", name = "Marcus G.", playStyle = PlayStyle.ATTACKER, selfRating = 8.8, avatarColorHex = 0xFFB71C1C, peerRatings = mapOf("P001" to 8.6, "P002" to 8.9, "P006" to 8.7)),
-                Player(id = "P004", name = "Akane Y.", playStyle = PlayStyle.DEFENDER, selfRating = 8.2, avatarColorHex = 0xFF4A148C, peerRatings = mapOf("P001" to 8.3, "P002" to 8.0, "P005" to 8.4)),
-                Player(id = "P005", name = "Tai T.", playStyle = PlayStyle.ALL_ROUNDER, selfRating = 8.9, avatarColorHex = 0xFF006064, peerRatings = mapOf("P002" to 9.0, "P004" to 8.7, "P007" to 8.9)),
-                Player(id = "P006", name = "Anthony G.", playStyle = PlayStyle.ATTACKER, selfRating = 8.0, avatarColorHex = 0xFFE65100, peerRatings = mapOf("P003" to 8.2, "P001" to 8.0)),
-                Player(id = "P007", name = "Hendra S.", playStyle = PlayStyle.NET_PLAY, selfRating = 8.7, avatarColorHex = 0xFF311B92, peerRatings = mapOf("P002" to 9.1, "P005" to 8.9, "P008" to 8.8)),
-                Player(id = "P008", name = "Loh K.", playStyle = PlayStyle.ALL_ROUNDER, selfRating = 7.5, avatarColorHex = 0xFF880E4F, peerRatings = mapOf("P001" to 7.8, "P007" to 7.6)),
-                Player(id = "P009", name = "Aaron C.", playStyle = PlayStyle.DEFENDER, selfRating = 7.6, avatarColorHex = 0xFF2E7D32, peerRatings = mapOf("P003" to 7.7, "P006" to 7.5)),
-                Player(id = "P010", name = "Soh W.", playStyle = PlayStyle.NET_PLAY, selfRating = 7.4, avatarColorHex = 0xFF1565C0, peerRatings = mapOf("P009" to 7.5, "P002" to 7.6)),
-                Player(id = "P011", name = "Chou T.", playStyle = PlayStyle.DEFENDER, selfRating = 7.0, avatarColorHex = 0xFF00838F, peerRatings = mapOf("P004" to 7.2, "P008" to 7.1)),
-                Player(id = "P012", name = "Alex Tan (Rookie)", playStyle = PlayStyle.ALL_ROUNDER, selfRating = 5.2, avatarColorHex = 0xFFEF6C00, peerRatings = mapOf("P001" to 5.0, "P002" to 5.4))
-            )
+            return emptyList()
         }
     }
 }
